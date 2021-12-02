@@ -1,5 +1,7 @@
 package io.zipcoder;
 
+import java.util.NoSuchElementException;
+
 public class MonkeyTypewriter {
     public static void main(String[] args) {
         String introduction = "It was the best of times,\n" +
@@ -30,11 +32,32 @@ public class MonkeyTypewriter {
         Thread monkeyFour = new Thread(unsafeCopier, "monkeyFour");
         Thread monkeyFive = new Thread(unsafeCopier, "monkeyFive");
 
-        monkeyOne.start();
-        monkeyTwo.start();
-        monkeyThree.start();
-        monkeyFour.start();
-        monkeyFive.start();
+        try {
+            monkeyOne.start();
+            monkeyTwo.start();
+            monkeyThree.start();
+            monkeyFour.start();
+            monkeyFive.start();
+        } catch (NoSuchElementException e) {
+            System.out.println("monkey no go");
+        }
+
+        SafeCopier safeCopier = new SafeCopier(introduction);
+        monkeyOne = new Thread(safeCopier, "monkeyOne");
+        monkeyTwo = new Thread(safeCopier, "monkeyTwo");
+        monkeyThree = new Thread(safeCopier, "monkeyThree");
+        monkeyFour = new Thread(safeCopier, "monkeyFour");
+        monkeyFive = new Thread(safeCopier, "monkeyFive");
+
+        try {
+            monkeyOne.start();
+            monkeyTwo.start();
+            monkeyThree.start();
+            monkeyFour.start();
+            monkeyFive.start();
+        } catch (NoSuchElementException e) {
+            System.out.println("monkey do go");
+        }
 
         // This wait is here because main is still a thread and we want the main method to print the finished copies
         // after enough time has passed.
@@ -45,6 +68,13 @@ public class MonkeyTypewriter {
         }
 
         // Print out the copied versions here.
-        System.out.println(unsafeCopier.copied);
+        System.out.println(new StringBuilder()
+                .append("Unsafe Copier: \n")
+                .append(unsafeCopier.copied));
+
+        System.out.println(new StringBuilder()
+                .append("-------------\n")
+                .append("Safe Copier: \n")
+                .append(safeCopier.copied));
     }
 }
